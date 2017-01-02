@@ -1,8 +1,12 @@
-
+#
+# - Command remote
+#
+# Run command on remote computer
+#
 class CommandRemote:
 
-    def __init__(self, connection, taskConfig, logging):
-        self.command = taskConfig["command"]
+    def __init__(self, connection, config, logging):
+        self.command = config["config"]["command"]
         self.connection = connection
         self.logging = logging
 

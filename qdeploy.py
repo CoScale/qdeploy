@@ -8,6 +8,7 @@ from connection import Connection
 from logging import Logging
 import tasks
 import importlib
+import datetime
 
 # Logging
 logging = Logging()
@@ -22,12 +23,21 @@ connectionConfig = data['connection']
 connection = Connection(connectionConfig, logging)
 connection.test()
 
+# Create release name
+today = datetime.datetime.today()
+release_name = today.strftime('%Y-%m-%d_%H%M%S')
+# TODO: Find nicer solution for this
+data['deployment']['release_name'] = release_name
 
-logging.message("# Init tasks")
 # Run tasks one by one
+logging.message("# Init tasks")
 tasklist = data['tasks']
 for taskconfig in tasklist:
-    logging.message("! Task %s: %s" % (taskconfig['task'], taskconfig['name']))
+    logging.message("! Task %s" % taskconfig['task'])
     TaskClass = getattr(importlib.import_module("tasks"), taskconfig['task'])
-    task = TaskClass(connection, taskconfig, logging)
+
+    task = TaskClass(connection, {
+        "config": taskconfig,
+        "deployment": data['deployment']
+    }, logging)
     task.run()
