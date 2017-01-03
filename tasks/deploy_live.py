@@ -6,15 +6,15 @@
 class DeployLive:
 
     def __init__(self, connection, config, logging):
-        self.connection = connection
-        self.logging = logging
-        self.remote = config['deployment']['remote'].rstrip("/")
-        self.release_name = config['deployment']['release_name']
+        self._connection = connection
+        self._logging = logging
+        self._remote = config['deployment']['remote'].rstrip("/")
+        self._release_name = config['deployment']['release_name']
 
     def run(self):
         # Create symlink from current to current deploy in deploys dir
-        self.connection.execute_remote('ln -sfn %s/deploys/%s/ %s/current' % (
-            self.remote,
-            self.release_name,
-            self.remote
+        self._connection.execute_remote('ln -sfn %s/deploys/%s/ %s/current' % (
+            self._remote,
+            self._release_name,
+            self._remote
         ))

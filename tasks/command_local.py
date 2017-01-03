@@ -6,9 +6,9 @@
 class CommandLocal:
 
     def __init__(self, connection, config, logging):
-        self.command = config["config"]["command"]
-        self.connection = connection
-        self.logging = logging
+        self._command = config["config"]["command"]
+        self._connection = connection
+        self._logging = logging
 
     def run(self):
-        self.connection.execute_local(self.command)
+        self._connection.execute_local(self._command)
