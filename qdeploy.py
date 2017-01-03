@@ -9,6 +9,12 @@ from logging import Logging
 import tasks
 import importlib
 import datetime
+import argparse
+
+parser = argparse.ArgumentParser(description='Start workload.')
+parser.add_argument('--test', action='store_true',
+                    help="run without executing commands")
+args = parser.parse_args()
 
 # Logging
 logging = Logging()
@@ -20,7 +26,7 @@ data = load(f, Loader=Loader)
 # Connection
 logging.message("# Init connection")
 connectionConfig = data['connection']
-connection = Connection(connectionConfig, logging)
+connection = Connection(config=connectionConfig, logservice=logging, test=args.test)
 connection.test()
 
 # Create release name

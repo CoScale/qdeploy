@@ -13,7 +13,7 @@ class DeployClean:
 
     def run(self):
         # Get list of builds
-        result = self.connection.execute_remote('ls -1a %s/deploys/' % self.remote)
+        result = self.connection.execute_remote('ls -1a %s/deploys/' % self.remote, safe=True)
         builds = []
         for line in result.stdout.splitlines():
             if line != "." and line != "..":
