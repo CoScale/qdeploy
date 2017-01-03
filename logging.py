@@ -8,11 +8,16 @@ class Logging:
     COLOR_RED = "\x1b[2;37;41m"
     COLOR_END = "\x1b[0m"
 
+    def __init__(self, verbose=False):
+        self.verbose = verbose
+
     def info(self, message):
-        print self.COLOR_WHITE + message + self.COLOR_END
+        if self.verbose:
+            print self.COLOR_WHITE + message + self.COLOR_END
 
     def message(self, message):
-        print self.COLOR_BLUE + message + self.COLOR_END
+        if self.verbose:
+            print self.COLOR_BLUE + message + self.COLOR_END
 
     def warning(self, message):
         print self.COLOR_YELLOW + message + self.COLOR_END

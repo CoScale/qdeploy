@@ -6,7 +6,6 @@ except ImportError:
     from yaml import Loader
 from connection import Connection
 from logging import Logging
-import tasks
 import importlib
 import datetime
 import argparse
@@ -14,10 +13,12 @@ import argparse
 parser = argparse.ArgumentParser(description='Start workload.')
 parser.add_argument('--test', action='store_true',
                     help="run without executing commands")
+parser.add_argument('--verbose', action='store_true',
+                        help="more verbose output")
 args = parser.parse_args()
 
 # Logging
-logging = Logging()
+logging = Logging(verbose=args.verbose)
 
 # Open yaml file
 f = open("deploy.yml", "r")
