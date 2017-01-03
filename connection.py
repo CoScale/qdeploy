@@ -1,4 +1,5 @@
-from subprocess import Popen, PIPE
+import subprocess
+import sys
 
 class Connection:
 
@@ -12,25 +13,29 @@ class Connection:
         self._logservice.warning("@ executing %s" % command)
 
         if not self._test or (self._test and safe):
-            p = Popen(command, shell=shell, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            p = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            output = ""
+            while True:
+                nextline = p.stdout.readline()
+                if nextline == '' and p.poll() is not None:
+                    break
+                output += nextline
+                sys.stdout.write(nextline)
+                sys.stdout.flush()
+
             p.wait()
 
             exitcode = p.returncode
-            stdout = p.stdout.read().rstrip()
-            stderr = p.stderr.read().rstrip()
         else:
             exitcode = -1
-            stdout = "command not executed"
-            stderr = ""
+            print "command not executed"
 
-        self._logservice.info("exitco: " + str(exitcode))
-        self._logservice.info("stdout: " + stdout)
-        self._logservice.info("stderr: " + stderr)
+        self._logservice.info("exitcode: " + str(exitcode))
 
         if exitcode > 0 and failOnError:
             raise Exception('connection: ssh command failed', command)
 
-        return CommandResult(exitcode, stdout, stderr)
+        return CommandResult(exitcode, output)
 
     def execute_local(self, command, safe=False):
         return self.execute([command], shell=True, safe=safe)
@@ -49,7 +54,6 @@ class Connection:
 
 class CommandResult:
 
-    def __init__(self, exitcode, stdout, stdin):
+    def __init__(self, exitcode, output):
         self.exitcode = exitcode
-        self.stdout = stdout
-        self.stdin = stdin
+        self.output = output

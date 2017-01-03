@@ -15,7 +15,7 @@ class DeployClean:
         # Get list of builds
         result = self._connection.execute_remote('ls -1a %s/deploys/' % self._remote, safe=True)
         builds = []
-        for line in result.stdout.splitlines():
+        for line in result.output.splitlines():
             if line != "." and line != "..":
                 builds.append(line)
 
