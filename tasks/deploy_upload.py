@@ -12,6 +12,10 @@ class DeployUpload:
         self._release_name = config['deployment']['release_name']
         self._local = config['deployment']['local'].rstrip("/")
         self._remote = config['deployment']['remote'].rstrip("/")
+        self._ignore = config['config']['ignore'] or []
+
+        # By default ignore .git
+        self._ignore.append('.git')
 
     def run(self):
         # Check if exist previous, next, current, deploys
@@ -32,9 +36,15 @@ class DeployUpload:
         # Copy files from current to next
         # TODO: Create config and command to copy files from current to next release
 
+        # Prepare ignore string
+        ignore = ""
+        for location in self._ignore:
+            ignore += "--exclude '%s' " % location
+
         # Resync files from local filesystem to next
-        self._connection.execute_local("rsync -avhv %s/ %s:%s/ --delete" % (
-           self._local,
-           self._connection.get_host(),
-           "%s/next" % self._remote
+        self._connection.execute_local("rsync -avhv --progress %s %s/ %s:%s/ --delete" % (
+            ignore.rstrip(" "),
+            self._local,
+            self._connection.get_host(),
+            "%s/next" % self._remote
         ))
